@@ -1,17 +1,21 @@
 - name: Check if the Site24x7 Agent service is running, restart if down
-  hosts: all  # Specify the appropriate host group here
-  become: yes        # Use sudo for privilege escalation
+  hosts: all
+  become: yes
   tasks:
 
     - name: Gather service facts
       ansible.builtin.service_facts:
 
-    - name: Ensure Site24x7 Agent service is running
-      ansible.builtin.service:
-        name: site24x7monagent.service
-        state: restarted  # This will restart the service if it is not running
-      when: ansible_facts.services['site24x7monagent.service'].state != 'running'
+    - name: Restart Site24x7 Agent if not running
+      command: sudo /bin/systemctl restart site24x7monagent.service
+      when:
+        - "'site24x7monagent.service' in ansible_facts.services"
+        - ansible_facts.services['site24x7monagent.service'].state != 'running'
 
     - name: Debug service status
-      debug:
-        msg: "The Site24x7 Agent service was {{ ansible_facts.services['site24x7monagent.service'].state }}"
+      command: systemctl status site24x7monagent.service
+      register: svc_status
+      ignore_errors: yes
+
+    - debug:
+        var: svc_status.stdout_lines
