@@ -1,8 +1,8 @@
 - name: Check if the Site24x7 Agent service is running, restart if down
-  hosts: all
+  hosts: localhost
+  connection: local
   become: yes
   tasks:
-
     - name: Gather service facts
       ansible.builtin.service_facts:
 
