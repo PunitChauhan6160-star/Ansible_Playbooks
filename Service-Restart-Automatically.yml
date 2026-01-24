@@ -1,5 +1,5 @@
 - name: Check if the Site24x7 Agent service is running, restart if down
-  hosts: localhost  # Specify the appropriate host group here
+  hosts: all  # Specify the appropriate host group here
   become: yes        # Use sudo for privilege escalation
   tasks:
 
