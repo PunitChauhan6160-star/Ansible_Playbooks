@@ -1,21 +1,38 @@
-- name: Check if the Site24x7 Agent service is running, restart if down
+---
+- name: Ensure Site24x7 Agent service is running on host
   hosts: localhost
-  connection: local
-  become: yes
+  connection: local      # Run on the host, not in the EE container
+  become: yes            # Use sudo
+  gather_facts: yes
+
   tasks:
-    - name: Gather service facts
+
+    - name: Gather all service facts
       ansible.builtin.service_facts:
 
-    - name: Restart Site24x7 Agent if not running
-      command: sudo /bin/systemctl restart site24x7monagent.service
+    - name: Debug current Site24x7 Agent service state
+      debug:
+        msg: >
+          Current state of site24x7monagent.service is
+          {{ ansible_facts.services['site24x7monagent.service'].state
+             if 'site24x7monagent.service' in ansible_facts.services else 'not found' }}
+
+    - name: Restart Site24x7 Agent if it is not running
+      ansible.builtin.command: sudo /bin/systemctl restart site24x7monagent.service
+      become: yes
+      delegate_to: localhost
+      run_once: true
       when:
         - "'site24x7monagent.service' in ansible_facts.services"
         - ansible_facts.services['site24x7monagent.service'].state != 'running'
 
-    - name: Debug service status
-      command: systemctl status site24x7monagent.service
+    - name: Verify Site24x7 Agent service status after restart
+      ansible.builtin.command: systemctl status site24x7monagent.service
       register: svc_status
       ignore_errors: yes
+      delegate_to: localhost
+      run_once: true
 
-    - debug:
+    - name: Show final service status
+      debug:
         var: svc_status.stdout_lines
