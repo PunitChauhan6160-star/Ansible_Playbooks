@@ -1,6 +1,6 @@
 ---
 - name: Backup logs directory
-  hosts: local
+  hosts: localhost
   become: yes
 
   tasks:
