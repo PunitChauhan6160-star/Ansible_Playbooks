@@ -1,12 +1,11 @@
 ---
-- name: Sync directory to another path
+- name: Backup logs directory
   hosts: local
   become: yes
 
   tasks:
-    - name: Rsync directory
-      ansible.builtin.synchronize:
+    - name: Copy logs directory
+      ansible.builtin.copy:
         src: /opt/site24x7
         dest: /var/lib/awx/logs
-        recursive: yes
-        delete: no
+        remote_src: yes
