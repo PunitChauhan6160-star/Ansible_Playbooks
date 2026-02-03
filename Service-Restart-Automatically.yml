@@ -1,17 +1,15 @@
-- name: Restart Site24x7 Agent service only if down
+- name: Restart Site24x7 Agent if down (remote)
   hosts: Host_group
   become: yes
   gather_facts: no
 
   tasks:
-    - name: Check Site24x7 Agent service state
-      command: systemctl is-active site24x7monagent.service
-      register: site24x7_status
+    - name: Check service status
+      ansible.builtin.shell: systemctl is-active site24x7monagent.service
+      register: svc_status
       failed_when: false
       changed_when: false
 
-    - name: Restart Site24x7 Agent if service is down
-      ansible.builtin.systemd:
-        name: site24x7monagent.service
-        state: restarted
-      when: site24x7_status.stdout != "active"
+    - name: Restart service if inactive
+      ansible.builtin.shell: systemctl restart site24x7monagent.service
+      when: svc_status.stdout != "active"
