@@ -1,5 +1,5 @@
 - name: Check if the Site24x7 Agent service is running, restart if down
-  hosts: aaptest.progressive.in  # Specify the appropriate host group here
+  hosts: Host_group  # Specify the appropriate host group here
   become: yes        # Use sudo for privilege escalation
   tasks:
 
