@@ -1,5 +1,6 @@
 - name: Restart Site24x7 Agent if down (remote)
   hosts: localhost
+  connection: local
   become: yes
   gather_facts: no
 
