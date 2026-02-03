@@ -5,5 +5,5 @@
   tasks:
     - name: Restart Site24x7 Agent
       ansible.builtin.service:
-        name: site24x7monagent
+        name: site24x7monagent.service
         state: restarted
