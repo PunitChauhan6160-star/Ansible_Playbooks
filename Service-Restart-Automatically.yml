@@ -1,6 +1,5 @@
 - name: Restart Site24x7 Agent if down (remote)
   hosts: aaptest.progressive.in
-  connection: local
   become: yes
   gather_facts: no
 
